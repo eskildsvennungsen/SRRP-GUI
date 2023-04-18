@@ -1,10 +1,11 @@
-
+﻿
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QFile>
 #include <QStandardItemModel>
+#include <QFileSystemModel>
 
 enum class BagSizes{
     SMALL = 1,
@@ -25,18 +26,19 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void readFile();
 
 private slots:
     void onBagSizeChange();
     void newDataStream();
     void handleButton();
-    void test();
+    void readFile(QModelIndex index);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
     QString currentFile;
-    QStandardItemModel* model;
+    QStandardItemModel* fileTableModel;
+    QFileSystemModel* fileListModel;
+    int filecount;
 };
 
 #endif // MAINWINDOW_H
