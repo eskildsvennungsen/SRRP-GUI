@@ -7,12 +7,8 @@
 #include <QStandardItemModel>
 #include <QFileSystemModel>
 
-enum class BagSizes{
-    SMALL = 1,
-    MEDIUM = 2,
-    LARGE = 3,
-    XLARGE = 4
-};
+#include "settings.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,17 +24,14 @@ public:
     ~MainWindow();
 
 private slots:
-    void onBagSizeChange();
-    void newDataStream();
     void handleButton();
     void readFile(QModelIndex index);
 
 private:
     Ui::MainWindow* ui;
-    QString currentFile;
     QStandardItemModel* fileTableModel;
     QFileSystemModel* fileListModel;
-    int filecount;
+    SettingsWindow* settingsWindow;
 };
 
 #endif // MAINWINDOW_H
