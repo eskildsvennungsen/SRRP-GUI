@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QListWidget>
+#include <QHBoxLayout>
+#include <QTableWidget>
 
 
 class SettingsWindow : public QWidget
@@ -20,7 +22,7 @@ private slots:
 
 private:
     QListWidget* m_list;
-    QWidget* parent;
+    QTableWidget* m_table;
 };
 
 #endif // SETTINGS_H

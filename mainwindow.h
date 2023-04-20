@@ -26,12 +26,14 @@ public:
 private slots:
     void handleButton();
     void readFile(QModelIndex index);
+    void activateHistory();
 
 private:
     Ui::MainWindow* ui;
     QStandardItemModel* fileTableModel;
     QFileSystemModel* fileListModel;
-    SettingsWindow* settingsWindow;
+private:
+    void clearFrame();
 };
 
 #endif // MAINWINDOW_H

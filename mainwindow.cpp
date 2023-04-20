@@ -7,10 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , fileTableModel(new QStandardItemModel)
     , fileListModel(new QFileSystemModel)
-    , settingsWindow(new SettingsWindow(this))
 {
     ui->setupUi(this);
-    this->resize(1000, 300);
 
     //Initiate fileView to display all test files
     QString directory = qApp->applicationDirPath() + "/tests";
@@ -22,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(ui->fileList, SIGNAL(clicked(QModelIndex)), this, SLOT(readFile(QModelIndex)));
     QObject::connect(ui->general, SIGNAL(clicked()), this, SLOT(handleButton()));
-    QObject::connect(ui->settings, SIGNAL(clicked()), settingsWindow, SLOT(activate()));
+    QObject::connect(ui->history, SIGNAL(clicked()), this, SLOT(activateHistory()));
 }
 
 MainWindow::~MainWindow(){
@@ -62,6 +60,20 @@ void MainWindow::MainWindow::readFile(QModelIndex index){
 }
 
 void MainWindow::MainWindow::handleButton(){
-    ui->generalFrame->setFocusProxy(settingsWindow);
-    //ui->generalFrame->setVisible(!ui->generalFrame->isVisible());
+    clearFrame();
+    QHBoxLayout* settingsLayout = new QHBoxLayout(ui->generalFrame);
+    ui->generalFrame->setLayout(settingsLayout);
+    settingsLayout->addWidget(new SettingsWindow(ui->generalFrame));
+
+}
+
+void MainWindow::MainWindow::activateHistory(){
+    clearFrame();
+    ui->setupUi(this);
+}
+
+void MainWindow::MainWindow::clearFrame(){
+    for(auto& x : ui->generalFrame->children()){
+        delete x;
+    }
 }
