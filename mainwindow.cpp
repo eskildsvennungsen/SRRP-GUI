@@ -1,6 +1,8 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "settings.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -61,15 +63,15 @@ void MainWindow::MainWindow::readFile(QModelIndex index){
 
 void MainWindow::MainWindow::handleButton(){
     clearFrame();
-    QHBoxLayout* settingsLayout = new QHBoxLayout(ui->generalFrame);
-    ui->generalFrame->setLayout(settingsLayout);
+    QHBoxLayout* settingsLayout = new QHBoxLayout(ui->generalFrame);  
     settingsLayout->addWidget(new SettingsWindow(ui->generalFrame));
+    settingsLayout->setContentsMargins(0,0,0,0);
+    ui->generalFrame->setLayout(settingsLayout);
 
 }
 
 void MainWindow::MainWindow::activateHistory(){
     clearFrame();
-    ui->setupUi(this);
 }
 
 void MainWindow::MainWindow::clearFrame(){

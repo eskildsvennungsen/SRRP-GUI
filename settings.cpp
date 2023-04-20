@@ -5,6 +5,8 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
 {
     QHBoxLayout* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0,0,0,0);
+
     m_list = new QListWidget(this);
     m_list->setMinimumHeight(this->height());
     m_list->setMinimumWidth(this->width() / 2);
