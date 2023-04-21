@@ -7,6 +7,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
 
+    /*
     m_list = new QListWidget(this);
     m_list->setMinimumHeight(this->height());
     m_list->setMinimumWidth(this->width() / 2);
@@ -20,11 +21,23 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     for(int i = 0; i < 100; i++){
         new QListWidgetItem(tr("Item #%1").arg(i+1), m_list);
+    }*/
+
+    QPushButton* bagSize = new QPushButton(this);
+    bagSize->setObjectName("smallBag");
+
+    buttons.push_back(bagSize);
+
+    for(auto& x : buttons){
+        layout->addWidget(x);
     }
 }
 
 SettingsWindow::~SettingsWindow(){
-    delete m_list;
+//    delete m_list;
+    for(auto& x : buttons){
+        delete x;
+    }
 }
 
 void SettingsWindow::SettingsWindow::activate(){

@@ -22,6 +22,8 @@ set(PROJECT_SOURCES
         settings.ui
         settings.h
         settings.cpp
+        history.h
+        history.cpp
         ${TS_FILES}
 )
 

@@ -5,6 +5,7 @@
 #include <QListWidget>
 #include <QHBoxLayout>
 #include <QTableWidget>
+#include <QPushButton>
 
 
 class SettingsWindow : public QWidget
@@ -14,8 +15,6 @@ public:
     explicit SettingsWindow(QWidget *parent = nullptr);
     ~SettingsWindow();
 
-signals:
-
 
 private slots:
     void activate();
@@ -23,6 +22,7 @@ private slots:
 private:
     QListWidget* m_list;
     QTableWidget* m_table;
+    QList<QPushButton*> buttons;
 };
 
 #endif // SETTINGS_H
