@@ -6,7 +6,17 @@
 #include <QHBoxLayout>
 #include <QTableWidget>
 #include <QPushButton>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonParseError>
+#include <QJsonArray>
 
+struct BagInfo{
+    BagInfo(QString n, int w, int h) : name(n), width(w), height(h) {}
+    QString name;
+    int width;
+    int height;
+};
 
 class SettingsWindow : public QWidget
 {
@@ -15,14 +25,12 @@ public:
     explicit SettingsWindow(QWidget *parent = nullptr);
     ~SettingsWindow();
 
-
 private slots:
-    void activate();
+    void readBagInfo();
 
 private:
-    QListWidget* m_list;
-    QTableWidget* m_table;
     QList<QPushButton*> buttons;
+    QList<BagInfo> bags;
 };
 
 #endif // SETTINGS_H

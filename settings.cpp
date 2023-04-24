@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "qobjectdefs.h"
 #include <QDebug>
 
 SettingsWindow::SettingsWindow(QWidget *parent)
@@ -7,41 +8,42 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
 
-    /*
-    m_list = new QListWidget(this);
-    m_list->setMinimumHeight(this->height());
-    m_list->setMinimumWidth(this->width() / 2);
+    readBagInfo();
 
-    m_table = new QTableWidget(50, 6, this);
-    m_table->setMinimumHeight(this->height());
-    m_table->setMinimumWidth(this->width() / 2);
-
-    layout->addWidget(m_list);
-    layout->addWidget(m_table);
-
-    for(int i = 0; i < 100; i++){
-        new QListWidgetItem(tr("Item #%1").arg(i+1), m_list);
-    }*/
-
-    QPushButton* bagSize = new QPushButton(this);
-    bagSize->setObjectName("smallBag");
-
-    buttons.push_back(bagSize);
-
-    for(auto& x : buttons){
-        layout->addWidget(x);
+    for(auto& bag : bags){
+        QPushButton* tmp = new QPushButton(QString(bag.name), this);
+        tmp->setObjectName(bag.name);
+        tmp->setMaximumSize(QSize(150,50));
+        buttons.push_back(tmp);
+        layout->addWidget(tmp);
     }
 }
 
 SettingsWindow::~SettingsWindow(){
-//    delete m_list;
-    for(auto& x : buttons){
-        delete x;
+    for(auto& button : buttons){
+        delete button;
     }
 }
 
-void SettingsWindow::SettingsWindow::activate(){
-    this->setVisible(!this->isVisible());
-    qDebug() << "Nice";
-    activateWindow();
+void SettingsWindow::readBagInfo(){
+    QFile inFile("baginfo.json");
+    inFile.open(QIODevice::ReadOnly|QIODevice::Text);
+    QByteArray data = inFile.readAll();
+    inFile.close();
+
+    QJsonParseError errorPtr;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &errorPtr);
+    if (doc.isNull()) {
+        qDebug() << "Parse failed";
+        qDebug() << errorPtr.errorString();
+        return;
+    }
+    QJsonObject rootObj = doc.object();
+    QJsonArray ptsArray = rootObj.value("BagTypes").toArray();
+    foreach(const QJsonValue & val, ptsArray){
+        QString name = val.toObject().value("name").toString();
+        int width = val.toObject().value("width").toInt();
+        int heigth = val.toObject().value("height").toInt();
+        bags.append(BagInfo(name, width, heigth));
+    }
 }

@@ -1,0 +1,19 @@
+{
+	"BagTypes" : [
+		{
+			"name" : "Small",
+			"height" : 150,
+			"width" : 300
+		},
+		{
+			"name" : "Medium",
+			"height" : 150,
+			"width" : 300
+		},
+		{
+			"name" : "Large",
+			"height" : 150,
+			"width" : 300
+		}
+	]
+}
