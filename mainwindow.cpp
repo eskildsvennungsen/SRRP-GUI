@@ -1,16 +1,15 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "settings.h"
+#include "history.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , fileTableModel(new QStandardItemModel)
-    , fileListModel(new QFileSystemModel)
-    , history(new HistoryWindow)
 {
     ui->setupUi(this);
+    ui->generalFrame->setMinimumSize(QSize(950,0));
     activateHistory();
 
     QObject::connect(ui->settings, SIGNAL(clicked()), this, SLOT(activateSettings()));
@@ -19,8 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow(){
     delete ui;
-    delete fileListModel;
-    delete fileTableModel;
 }
 
 void MainWindow::activateSettings(){

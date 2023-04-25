@@ -19,7 +19,6 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        settings.ui
         settings.h
         settings.cpp
         history.h
@@ -54,7 +53,7 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets pigpio)
 
 set_target_properties(SRRP-GUI PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

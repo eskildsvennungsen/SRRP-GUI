@@ -1,23 +1,33 @@
 #include "settings.h"
 #include "qobjectdefs.h"
 #include <QDebug>
+#include <pigpio.h>
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
     , fileWatcher(new QFileSystemWatcher(this))
     , mainLayout(new QHBoxLayout(this))
+    , buttons(new QButtonGroup)
 {
     mainLayout->setContentsMargins(0,0,0,0);
     readBagInfo("baginfo.json");
     fileWatcher->addPath(QString("baginfo.json"));
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
+    QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
+
+    if (gpioInitialise() < 0)
+    {
+        qDebug() << "pigpio initialisation failed";
+    }
+    else
+    {
+        qDebug() << "pigpio initialised ok";
+    }
 }
 
 SettingsWindow::~SettingsWindow(){
-    for(auto& button : buttons){
-        delete button;
-    }
+    delete buttons;
     delete fileWatcher;
     delete mainLayout;
 }
@@ -36,13 +46,12 @@ void SettingsWindow::readBagInfo(const QString& path){
         qDebug() << errorPtr.errorString();
         return;
     }
+
     QJsonObject rootObj = doc.object();
     QJsonArray ptsArray = rootObj.value("BagTypes").toArray();
 
-    if(!buttons.isEmpty()){
-        for(auto& button : buttons){
-            delete button;
-        }
+    if(!buttons->buttons().isEmpty()){
+        qDeleteAll(buttons->buttons());
         bags.clear();
     }
 
@@ -54,10 +63,16 @@ void SettingsWindow::readBagInfo(const QString& path){
     }
 
     for(const auto &bag : bags){
-        QPushButton* tmp = new QPushButton(QString(bag.name), this);
+        QPushButton* tmp = new QPushButton(bag.name, this);
         tmp->setObjectName(bag.name);
+        tmp->setToolTip(QString("Width: %1\nHeigth: %2").arg(bag.width).arg(bag.height));
         tmp->setMaximumSize(QSize(150,50));
-        buttons.push_back(tmp);
+        buttons->addButton(tmp);
         mainLayout->addWidget(tmp);
     }
+}
+
+void SettingsWindow::buttonPressed(int index){
+    QString buttonPressed = buttons->button(index)->objectName();
+    qDebug() << buttonPressed;
 }

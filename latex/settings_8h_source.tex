@@ -1,0 +1,46 @@
+\doxysection{settings.\+h}
+\hypertarget{settings_8h_source}{}\label{settings_8h_source}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SETTINGS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SETTINGS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QWidget>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QListWidget>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QHBoxLayout>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <QTableWidget>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <QPushButton>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <QFile>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <QJsonObject>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <QJsonParseError>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <QJsonArray>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <QFileSystemWatcher>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <QButtonGroup>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structBagInfo}{BagInfo}}\{}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{structBagInfo}{BagInfo}}(QString\ n,\ \textcolor{keywordtype}{int}\ w,\ \textcolor{keywordtype}{int}\ h)\ :\ name(n),\ width(w),\ height(h)\ \{\}}
+\DoxyCodeLine{00018\ \ \ \ \ QString\ name;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{int}\ width;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{int}\ height;}
+\DoxyCodeLine{00021\ \};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classSettingsWindow}{SettingsWindow}}\ :\ \textcolor{keyword}{public}\ QWidget}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classSettingsWindow}{SettingsWindow}}(QWidget\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classSettingsWindow}{\string~SettingsWindow}}();}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{private}\ slots:}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{void}\ readBagInfo(\textcolor{keyword}{const}\ QString\&\ path\ =\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{void}\ buttonPressed(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00035\ \ \ \ \ QButtonGroup*\ buttons;}
+\DoxyCodeLine{00036\ \ \ \ \ QList<BagInfo>\ bags;}
+\DoxyCodeLine{00037\ \ \ \ \ QFileSystemWatcher*\ fileWatcher;}
+\DoxyCodeLine{00038\ \ \ \ \ QHBoxLayout*\ mainLayout;}
+\DoxyCodeLine{00039\ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SETTINGS\_H}}
+
+\end{DoxyCode}

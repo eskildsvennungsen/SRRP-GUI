@@ -11,6 +11,7 @@
 #include <QJsonParseError>
 #include <QJsonArray>
 #include <QFileSystemWatcher>
+#include <QButtonGroup>
 
 struct BagInfo{
     BagInfo(QString n, int w, int h) : name(n), width(w), height(h) {}
@@ -28,9 +29,10 @@ public:
 
 private slots:
     void readBagInfo(const QString& path = "");
+    void buttonPressed(int index);
 
 private:
-    QList<QPushButton*> buttons;
+    QButtonGroup* buttons;
     QList<BagInfo> bags;
     QFileSystemWatcher* fileWatcher;
     QHBoxLayout* mainLayout;
