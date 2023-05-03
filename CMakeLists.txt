@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(PythonLibs REQUIRED)
 
 set(TS_FILES SRRP-GUI_en_US.ts)
 
@@ -55,7 +56,8 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets pigpio)
+include_directories(${PYTHON_INCLUDE_DIRS})
+target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${PYTHON_LIBRARIES})
 
 set_target_properties(SRRP-GUI PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -75,3 +77,4 @@ endif()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tests/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/tests/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/baginfo.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/ac.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

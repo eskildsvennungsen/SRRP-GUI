@@ -1,7 +1,11 @@
 #include "settings.h"
 #include "qobjectdefs.h"
 #include <QDebug>
-#include <pigpio.h>
+#pragma push_macro("slots")
+#undef slots
+#include "Python.h"
+#pragma pop_macro("slots")
+
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
@@ -15,15 +19,6 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
-
-    if (gpioInitialise() < 0)
-    {
-        qDebug() << "pigpio initialisation failed";
-    }
-    else
-    {
-        qDebug() << "pigpio initialised ok";
-    }
 }
 
 SettingsWindow::~SettingsWindow(){
@@ -76,4 +71,13 @@ bool SettingsWindow::readBagInfo(const QString& path){
 void SettingsWindow::buttonPressed(int index){
     QString buttonPressed = buttons->button(index)->objectName();
     qDebug() << buttonPressed;
+
+    char filename[] = "ac.py";
+    FILE* fp = popen("python ac.py", "r");
+
+    Py_Initialize();
+
+    PyRun_SimpleFile(fp, filename);
+
+    Py_Finalize();
 }
