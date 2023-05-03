@@ -6,6 +6,10 @@ class PIController
 {
 public:
     PIController();
+
+private:
+    int gpio;
+
 };
 
 #endif // PICONTROLLER_H
