@@ -13,10 +13,6 @@
 #include <QFileSystemWatcher>
 #include <QButtonGroup>
 
-
-/*!
- * @brief Stores bag information
-*/
 struct BagInfo{
     BagInfo(QString n, int w, int h) : name(n), width(w), height(h) {}
     QString name;
@@ -24,11 +20,6 @@ struct BagInfo{
     int height;
 };
 
-/*!
- * @brief System settings
- *
- * Lets the user controll the linear actuators to raise/lower the system based on bag type.
-*/
 class SettingsWindow : public QWidget
 {
     Q_OBJECT
@@ -36,20 +27,8 @@ public:
     explicit SettingsWindow(QWidget *parent = nullptr);
     ~SettingsWindow();
 
-public slots:
-    /*!
-     * @brief Reads from json file and displays buttons
-     * @param path inputs json file name
-     * @return Returns 0 if no file is found, otherwise 1
-    */
-    bool readBagInfo(const QString& path = "");
-
-    /*!
-     * @brief Detects which button is pressed, and sends signal to GPIO on
-     * raspberryPi
-     *
-     * @param index of pressed button
-    */
+private slots:
+    void readBagInfo(const QString& path = "");
     void buttonPressed(int index);
 
 private:

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['settingswindow_0',['SettingsWindow',['../classSettingsWindow.html',1,'']]]
+  ['mainwindow_0',['MainWindow',['../classMainWindow.html',1,'MainWindow'],['../classMainWindow.html#a996c5a2b6f77944776856f08ec30858d',1,'MainWindow::MainWindow()']]]
 ];

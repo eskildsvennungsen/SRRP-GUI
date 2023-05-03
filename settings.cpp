@@ -32,7 +32,7 @@ SettingsWindow::~SettingsWindow(){
     delete mainLayout;
 }
 
-void SettingsWindow::readBagInfo(const QString& path){
+bool SettingsWindow::readBagInfo(const QString& path){
     QFile inFile(path);
 
     inFile.open(QIODevice::ReadOnly|QIODevice::Text);
@@ -44,18 +44,18 @@ void SettingsWindow::readBagInfo(const QString& path){
     if (doc.isNull()) {
         qDebug() << "Parse failed";
         qDebug() << errorPtr.errorString();
-        return;
+        return 0;
     }
 
     QJsonObject rootObj = doc.object();
-    QJsonArray ptsArray = rootObj.value("BagTypes").toArray();
+    QJsonArray bagArray = rootObj.value("BagTypes").toArray();
 
     if(!buttons->buttons().isEmpty()){
         qDeleteAll(buttons->buttons());
         bags.clear();
     }
 
-    foreach(const QJsonValue& val, ptsArray){
+    foreach(const QJsonValue& val, bagArray){
         QString name = val.toObject().value("name").toString();
         int width = val.toObject().value("width").toInt();
         int heigth = val.toObject().value("height").toInt();
@@ -70,6 +70,7 @@ void SettingsWindow::readBagInfo(const QString& path){
         buttons->addButton(tmp);
         mainLayout->addWidget(tmp);
     }
+    return 1;
 }
 
 void SettingsWindow::buttonPressed(int index){

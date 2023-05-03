@@ -1,18 +1,44 @@
 \doxysection{Main\+Window Class Reference}
 \hypertarget{classMainWindow}{}\label{classMainWindow}\index{MainWindow@{MainWindow}}
+
+
+The main window for the whole application.  
+
+
+
+
+{\ttfamily \#include $<$mainwindow.\+h$>$}
+
 Inheritance diagram for Main\+Window\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{classMainWindow}
 \end{center}
 \end{figure}
+\doxysubsubsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classMainWindow_a822cfb7a577435ddc0c7e3ac8e273f60}\label{classMainWindow_a822cfb7a577435ddc0c7e3ac8e273f60} 
+void {\bfseries activate\+History} ()
+\begin{DoxyCompactList}\small\item\em Creates \doxylink{classHistoryWindow}{History\+Window} object and emplaces it in Main\+Windows general\+Frame. \end{DoxyCompactList}\item 
+\Hypertarget{classMainWindow_a04dd57c402764c8bfb71a99bd21bc51a}\label{classMainWindow_a04dd57c402764c8bfb71a99bd21bc51a} 
+void {\bfseries activate\+Settings} ()
+\begin{DoxyCompactList}\small\item\em Creates \doxylink{classSettingsWindow}{Settings\+Window} object and emplaces it in Main\+Windows general\+Frame. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{classMainWindow_a996c5a2b6f77944776856f08ec30858d}\label{classMainWindow_a996c5a2b6f77944776856f08ec30858d} 
 {\bfseries Main\+Window} (QWidget $\ast$parent=nullptr)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Sets up the UI design. \end{DoxyCompactList}\item 
+\Hypertarget{classMainWindow_ae98d00a93bc118200eeef9f9bba1dba7}\label{classMainWindow_ae98d00a93bc118200eeef9f9bba1dba7} 
+{\bfseries $\sim$\+Main\+Window} ()
+\begin{DoxyCompactList}\small\item\em Deletes ui. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\doxysubsection{Detailed Description}
+The main window for the whole application. 
+
+This window is designed with a UI file. The purpose of this is to setup the main structure of the application. It\textquotesingle{}s responsible for instansiating the other window respectevly. It\textquotesingle{}s structured such that withing the central widget there is a frame, depening on which buttons the user presses the cooresponding object is created. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

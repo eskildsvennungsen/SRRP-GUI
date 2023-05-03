@@ -47,12 +47,6 @@ HistoryWindow::~HistoryWindow(){
     delete tableView;
 }
 
-void HistoryWindow::activate(){
-    this->setVisible(!this->isVisible());
-    qDebug() << "Nice";
-    activateWindow();
-}
-
 void HistoryWindow::readFile(QModelIndex index){
     delete fileTableModel;
     fileTableModel = new QStandardItemModel;

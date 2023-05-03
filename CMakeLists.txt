@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         settings.cpp
         history.h
         history.cpp
+        picontroller.h
+        picontroller.cpp
         ${TS_FILES}
 )
 
