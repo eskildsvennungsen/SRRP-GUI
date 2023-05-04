@@ -1,14 +1,10 @@
 #include "settings.h"
 #include "qobjectdefs.h"
 #include <QDebug>
-#pragma push_macro("slots")
-#undef slots
-#include "Python.h"
-#pragma pop_macro("slots")
-#include <thread>
 #include <QFuture>
 #include <QtConcurrent>
-#include "picontroller.h"
+#include <stdlib.h>
+
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
@@ -22,15 +18,12 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
-
-    Py_Initialize();
 }
 
 SettingsWindow::~SettingsWindow(){
     delete buttons;
     delete fileWatcher;
     delete mainLayout;
-    Py_Finalize();
 }
 
 bool SettingsWindow::readBagInfo(const QString& path){
@@ -78,14 +71,5 @@ void SettingsWindow::buttonPressed(int index){
     QString buttonPressed = buttons->button(index)->objectName();
     qDebug() << buttonPressed;
 
-    /*
-    char filename[] = "ac.py";
-    FILE* fp = popen("python ac.py", "r");
-
-
-    QFuture<int> future = QtConcurrent::run(PyRun_SimpleFile, fp, filename);
-    qDebug() << future.result();
-    */
-
-    PIController::on();
+    auto task = QtConcurrent::task([]{ system("python ac.py"); }).spawn();
 }

@@ -1,9 +1,5 @@
-import time
-
-def run():
-    print("hello world")
-    time.sleep(3)
+import RPi.GPIO as GPIO
 
 
-if __name__ == "__main__":
-    run()
+chan_list = (13, 35, 37)
+GPIO.output(chan_list, (GPIO.HIGH,GPIO.LOW, GPIO.HIGH)) 
