@@ -2,3 +2,4 @@ latex/
 html/
 build/
 doxconfig
+.ccls-cache/

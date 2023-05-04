@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Concurrent)
 find_package(PythonLibs REQUIRED)
 
 set(TS_FILES SRRP-GUI_en_US.ts)
@@ -57,7 +57,7 @@ else()
 endif()
 
 include_directories(${PYTHON_INCLUDE_DIRS})
-target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${PYTHON_LIBRARIES})
+target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${PYTHON_LIBRARIES} Qt6::Concurrent)
 
 set_target_properties(SRRP-GUI PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

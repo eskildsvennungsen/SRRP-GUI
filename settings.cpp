@@ -5,7 +5,10 @@
 #undef slots
 #include "Python.h"
 #pragma pop_macro("slots")
-
+#include <thread>
+#include <QFuture>
+#include <QtConcurrent>
+#include "picontroller.h"
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
@@ -19,12 +22,15 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
+
+    Py_Initialize();
 }
 
 SettingsWindow::~SettingsWindow(){
     delete buttons;
     delete fileWatcher;
     delete mainLayout;
+    Py_Finalize();
 }
 
 bool SettingsWindow::readBagInfo(const QString& path){
@@ -50,7 +56,7 @@ bool SettingsWindow::readBagInfo(const QString& path){
         bags.clear();
     }
 
-    foreach(const QJsonValue& val, bagArray){
+    for(const QJsonValue& val : bagArray){
         QString name = val.toObject().value("name").toString();
         int width = val.toObject().value("width").toInt();
         int heigth = val.toObject().value("height").toInt();
@@ -72,12 +78,14 @@ void SettingsWindow::buttonPressed(int index){
     QString buttonPressed = buttons->button(index)->objectName();
     qDebug() << buttonPressed;
 
+    /*
     char filename[] = "ac.py";
     FILE* fp = popen("python ac.py", "r");
 
-    Py_Initialize();
 
-    PyRun_SimpleFile(fp, filename);
+    QFuture<int> future = QtConcurrent::run(PyRun_SimpleFile, fp, filename);
+    qDebug() << future.result();
+    */
 
-    Py_Finalize();
+    PIController::on();
 }
