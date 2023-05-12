@@ -36,3 +36,4 @@ qt6-webengine
 qt6-websockets
 qt6-webview
 qtpass
+cmake

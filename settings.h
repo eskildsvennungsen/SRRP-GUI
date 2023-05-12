@@ -15,10 +15,11 @@
 
 
 /*!
- * @brief Stores bag information
+ * @brief Stores relevant bag information
 */
 struct BagInfo{
-    BagInfo(QString n, int w, int h) : name(n), width(w), height(h) {}
+    explicit BagInfo(QString n, int w, int h) : name(n), width(w), height(h) {}
+    BagInfo();
     QString name;
     int width;
     int height;
@@ -51,6 +52,9 @@ public slots:
      * @param index of pressed button
     */
     void buttonPressed(int index);
+
+private:
+    BagInfo getBag(const QString& name);
 
 private:
     QButtonGroup* buttons;

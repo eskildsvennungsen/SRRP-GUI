@@ -4,7 +4,12 @@
 #include <QFuture>
 #include <QtConcurrent>
 #include <stdlib.h>
-
+#include <QIcon>
+ #include <QLineEdit>
+#include <QDialog>
+#include <QLabel>
+#include <QFormLayout>
+#include <QDialogButtonBox>
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
@@ -18,6 +23,13 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
+
+    QPushButton* custom = new QPushButton(QIcon("res/40031.png"), "", this);
+    custom->setIconSize(QSize(15, 15));
+    custom->setObjectName("Settings");
+    custom->setMaximumSize(50,50);
+    mainLayout->addWidget(custom);
+    buttons->addButton(custom);
 }
 
 SettingsWindow::~SettingsWindow(){
@@ -57,6 +69,7 @@ bool SettingsWindow::readBagInfo(const QString& path){
     }
 
     for(const auto &bag : bags){
+        if(bag.name == "Settings") continue;
         QPushButton* tmp = new QPushButton(bag.name, this);
         tmp->setObjectName(bag.name);
         tmp->setToolTip(QString("Width: %1\nHeigth: %2").arg(bag.width).arg(bag.height));
@@ -64,12 +77,50 @@ bool SettingsWindow::readBagInfo(const QString& path){
         buttons->addButton(tmp);
         mainLayout->addWidget(tmp);
     }
+
+    inFile.close();
     return 1;
 }
+
+
 
 void SettingsWindow::buttonPressed(int index){
     QString buttonPressed = buttons->button(index)->objectName();
     qDebug() << buttonPressed;
 
-    auto task = QtConcurrent::task([]{ system("python ac.py"); }).spawn();
+    if(buttonPressed == "Settings"){
+        QDialog tmp(this);
+        tmp.setMinimumSize(QSize(200, 150));
+        QVBoxLayout* mainLayout = new QVBoxLayout();
+        QFormLayout* layout = new QFormLayout();
+
+        layout->addRow(new QLabel("Height"), new QLineEdit(tr("%1").arg(getBag(buttonPressed).height)));
+        layout->addRow(new QLabel("Width"), new QLineEdit(tr("%1").arg(getBag(buttonPressed).width)));
+
+        QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                         | QDialogButtonBox::Cancel);
+
+        QObject::connect(buttonBox, &QDialogButtonBox::accepted, &tmp, &QDialog::accept);
+        QObject::connect(buttonBox, &QDialogButtonBox::rejected, &tmp, &QDialog::reject);
+
+        mainLayout->addLayout(layout);
+        mainLayout->addWidget(buttonBox);
+        tmp.setLayout(mainLayout);
+
+        tmp.exec();
+    }
+
+    /* auto task = QtConcurrent::task([]{ system("python ac.py"); }).spawn(); Leave it be if we ever need tasking */
 }
+
+BagInfo SettingsWindow::getBag(const QString& name){
+    for(auto& bag : bags){
+        if(bag.name == name) return bag;
+    }
+    return BagInfo("", 0, 0);
+}
+
+
+
+
+

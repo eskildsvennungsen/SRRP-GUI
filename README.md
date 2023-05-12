@@ -1,6 +1,10 @@
 # SRRP - GUI
 A simple graphical user interface for controlling and monitoring the SRRP system. 
 
+## Requirements:
+- Qt6
+- Cmake
+
 #### Install:
 ```console 
 git clone https://github.com/eskildsvennungsen/SRRP-GUI

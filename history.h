@@ -9,10 +9,13 @@
 #include <QTableView>
 #include <QListView>
 
-//! History related features
-/*! A class for displaying the history of the system.
-    Logged data is saved as csv files and can then be retrieved at any time.
- */
+
+/*!
+ * @brief History related features
+ *
+ * A class for displaying the history of the system.
+ * Logged data is saved as csv files and can then be retrieved at any time.
+*/
 class HistoryWindow : public QWidget
 {
     Q_OBJECT

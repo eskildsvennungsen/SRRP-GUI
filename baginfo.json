@@ -14,6 +14,11 @@
 			"name" : "Large",
 			"height" : 150,
 			"width" : 300
+		},
+		{
+			"name" : "Settings",
+			"height" : 150,
+			"width" : 300
 		}
 	]
 }

@@ -75,4 +75,3 @@ void HistoryWindow::readFile(QModelIndex index){
     }
     tableView->setModel(fileTableModel);
 }
-
