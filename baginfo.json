@@ -1,24 +1,22 @@
 {
-	"BagTypes" : [
-		{
-			"name" : "Small",
-			"height" : 150,
-			"width" : 300
-		},
-		{
-			"name" : "Medium",
-			"height" : 150,
-			"width" : 300
-		},
-		{
-			"name" : "Large",
-			"height" : 150,
-			"width" : 300
-		},
-		{
-			"name" : "Settings",
-			"height" : 150,
-			"width" : 300
-		}
-	]
+	"Settings": {
+        "name" : "Settings",
+		"height" : 350,
+		"width" : 300
+	},
+	"Small": {
+        "name" : "Small",
+		"height" : 150,
+		"width" : 300
+	},
+	"Medium": {
+        "name" : "Medium",
+		"height" : 150,
+		"width" : 300
+	},
+	"Large": {
+        "name" : "Large",
+		"height" : 150,
+		"width" : 300
+	}
 }

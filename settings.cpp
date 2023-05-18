@@ -11,6 +11,7 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 
+
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
     , fileWatcher(new QFileSystemWatcher(this))
@@ -23,13 +24,6 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
-
-    QPushButton* custom = new QPushButton(QIcon("res/40031.png"), "", this);
-    custom->setIconSize(QSize(15, 15));
-    custom->setObjectName("Settings");
-    custom->setMaximumSize(50,50);
-    mainLayout->addWidget(custom);
-    buttons->addButton(custom);
 }
 
 SettingsWindow::~SettingsWindow(){
@@ -38,7 +32,13 @@ SettingsWindow::~SettingsWindow(){
     delete mainLayout;
 }
 
+
 bool SettingsWindow::readBagInfo(const QString& path){
+    QPushButton* custom = new QPushButton(QIcon("res/40031.png"), "", this);
+    custom->setIconSize(QSize(15, 15));
+    custom->setObjectName("Settings");
+    custom->setMaximumSize(50,50);
+
     QFile inFile(path);
 
     inFile.open(QIODevice::ReadOnly|QIODevice::Text);
@@ -52,16 +52,14 @@ bool SettingsWindow::readBagInfo(const QString& path){
         qDebug() << errorPtr.errorString();
         return 0;
     }
-
     QJsonObject rootObj = doc.object();
-    QJsonArray bagArray = rootObj.value("BagTypes").toArray();
 
     if(!buttons->buttons().isEmpty()){
         qDeleteAll(buttons->buttons());
         bags.clear();
     }
 
-    for(const QJsonValue& val : bagArray){
+    for(const QJsonValue& val : rootObj){
         QString name = val.toObject().value("name").toString();
         int width = val.toObject().value("width").toInt();
         int heigth = val.toObject().value("height").toInt();
@@ -78,7 +76,10 @@ bool SettingsWindow::readBagInfo(const QString& path){
         mainLayout->addWidget(tmp);
     }
 
+    mainLayout->addWidget(custom);
+    buttons->addButton(custom);
     inFile.close();
+
     return 1;
 }
 
@@ -86,26 +87,34 @@ bool SettingsWindow::readBagInfo(const QString& path){
 
 void SettingsWindow::buttonPressed(int index){
     QString buttonPressed = buttons->button(index)->objectName();
-    qDebug() << buttonPressed;
 
     if(buttonPressed == "Settings"){
         QDialog tmp(this);
         tmp.setMinimumSize(QSize(200, 150));
-        QVBoxLayout* mainLayout = new QVBoxLayout();
+        QVBoxLayout* v_layout = new QVBoxLayout();
         QFormLayout* layout = new QFormLayout();
 
-        layout->addRow(new QLabel("Height"), new QLineEdit(tr("%1").arg(getBag(buttonPressed).height)));
-        layout->addRow(new QLabel("Width"), new QLineEdit(tr("%1").arg(getBag(buttonPressed).width)));
+
+        QLineEdit* height = new QLineEdit(tr("%1").arg(getBag(buttonPressed).height));
+        height->setObjectName(QString("heightBox"));
+
+        QLineEdit* width = new QLineEdit(tr("%1").arg(getBag(buttonPressed).width));
+        width->setObjectName(QString("widthBox"));
+
+        layout->addRow(new QLabel("Height"), height);
+        layout->addRow(new QLabel("Width"), width);
 
         QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                          | QDialogButtonBox::Cancel);
 
         QObject::connect(buttonBox, &QDialogButtonBox::accepted, &tmp, &QDialog::accept);
         QObject::connect(buttonBox, &QDialogButtonBox::rejected, &tmp, &QDialog::reject);
+        QObject::connect(height, SIGNAL(textChanged(const QString &)), this, SLOT(updateBagInfo(const QString &)));
+        QObject::connect(width, SIGNAL(textChanged(const QString &)), this, SLOT(updateBagInfo(const QString &)));
 
-        mainLayout->addLayout(layout);
-        mainLayout->addWidget(buttonBox);
-        tmp.setLayout(mainLayout);
+        v_layout->addLayout(layout);
+        v_layout->addWidget(buttonBox);
+        tmp.setLayout(v_layout);
 
         tmp.exec();
     }
@@ -118,6 +127,29 @@ BagInfo SettingsWindow::getBag(const QString& name){
         if(bag.name == name) return bag;
     }
     return BagInfo("", 0, 0);
+}
+
+void SettingsWindow::updateBagInfo(const QString& text){
+    QFile file("baginfo.json");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonParseError JsonParseError;
+    QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);
+    file.close();
+    QJsonObject RootObject = JsonDocument.object();
+    QJsonValueRef ref = RootObject.find("Settings").value();
+    QJsonObject m_addvalue = ref.toObject();
+
+    if(QObject::sender()->objectName() == QString("heightBox")){
+        m_addvalue.insert("height", text.toDouble());
+    } else{
+        m_addvalue.insert("width", text.toDouble());
+    }
+
+    ref=m_addvalue;
+    JsonDocument.setObject(RootObject);
+    file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
+    file.write(JsonDocument.toJson());
+    file.close();
 }
 
 
