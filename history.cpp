@@ -30,6 +30,7 @@ HistoryWindow::HistoryWindow(QWidget *parent)
     tableView->setMinimumSize(QSize(700, 0));
 
     horizontalLayout_2->addWidget(tableView);
+    tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     horizontalLayout->addWidget(this);
 
@@ -65,13 +66,28 @@ void HistoryWindow::readFile(QModelIndex index){
 
             int colIndex = 0;
             for(auto& token : lineToken){
+
                 QStandardItem* item = new QStandardItem(token);
-                fileTableModel->setItem(lineIndex, colIndex, item);
+                if(colIndex == 3){
+                    if(token == '0'){
+                        item->setBackground(QBrush(QColor(Qt::green), Qt::SolidPattern));
+                    } else if(token != "Reason"){
+                        item->setBackground(QBrush(QColor(Qt::red), Qt::SolidPattern));
+                        item->setForeground(QBrush(Qt::white));
+                    }
+                }
+                if(lineIndex == 0){
+                    fileTableModel->setHorizontalHeaderItem(colIndex, item);
+                } else {
+                    fileTableModel->setItem(lineIndex, colIndex, item);
+                }
                 colIndex++;
             }
             lineIndex++;
         }
         file.close();
     }
+    /*Setting horizontal headers creates blank row, this removes it*/
+    fileTableModel->removeRow(0);
     tableView->setModel(fileTableModel);
 }
