@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         settings.cpp
         history.h
         history.cpp
+        generalwindow.h
+        generalwindow.cpp
         ${TS_FILES}
 )
 
@@ -74,4 +76,3 @@ endif()
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tests/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/tests/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/res/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/baginfo.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/ac.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

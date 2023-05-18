@@ -1,60 +1,35 @@
-#include "history.h"
-#include "qapplication.h"
+#include "generalwindow.h"
 #include "qheaderview.h"
 
-
-HistoryWindow::HistoryWindow(QWidget *parent)
-    : QWidget{parent}
-    , fileTableModel(new QStandardItemModel)
-    , fileListModel(new QFileSystemModel)
-    , horizontalLayout(new QHBoxLayout)
-    , horizontalLayout_2(new QHBoxLayout)
-    , fileList(new QListView)
-    , tableView(new QTableView)
+GeneralWindow::GeneralWindow(QWidget* parent)
+    : QWidget(parent),
+    fileTableModel(new QStandardItemModel(this)),
+    tableView(new QTableView(this)),
+    fileWatcher(new QFileSystemWatcher(this))
 {
-    horizontalLayout_2 = new QHBoxLayout(this);
-    horizontalLayout_2->setObjectName("horizontalLayout_2");
-    horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-    fileList = new QListView(this);
-    fileList->setObjectName("fileList");
-    fileList->setViewMode(QListView::ListMode);
-
-    QString directory = qApp->applicationDirPath() + "/tests";
-    fileList->setModel(fileListModel);
-    fileList->setRootIndex(fileListModel->setRootPath(directory));
-
-    horizontalLayout_2->addWidget(fileList);
+    fileWatcher->addPath("tests/Settings_bagtest.csv");
 
     tableView = new QTableView(this);
     tableView->setObjectName("tableView");
-    tableView->setMinimumSize(QSize(700, 0));
-
-    horizontalLayout_2->addWidget(tableView);
+    tableView->setMinimumSize(parent->size());
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    horizontalLayout->addWidget(this);
+    readFile(QString("tests/Settings_bagtest.csv"));
 
-    tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    QObject::connect(fileList, SIGNAL(clicked(QModelIndex)), this, SLOT(readFile(QModelIndex)));
+    QObject::connect(fileWatcher, SIGNAL(fileChanged(const QString &)), this, SLOT(readFile(const QString &)));
 }
 
-HistoryWindow::~HistoryWindow(){
+GeneralWindow::~GeneralWindow(){
     delete fileTableModel;
-    delete fileListModel;
-    delete horizontalLayout;
-    delete horizontalLayout_2;
-    delete fileList;
     delete tableView;
+    delete fileWatcher;
 }
 
-void HistoryWindow::readFile(QModelIndex index){
+void GeneralWindow::readFile(const QString& fileChanged){
     delete fileTableModel;
     fileTableModel = new QStandardItemModel;
 
-    QString itemText = index.data(Qt::DisplayRole).toString();
-    QString path = qApp->applicationDirPath();
-    QFile file(tr("%1/tests/%2").arg(path, itemText));
+    QFile file(fileChanged);
 
     if(file.open(QIODevice::ReadOnly)){
         int lineIndex = 0;

@@ -46,6 +46,10 @@ public slots:
     */
     void activateSettings();
 
+    /*! @brief Creates GeneralWindow object and emplaces it in MainWindow*/
+    void activateGeneral();
+
+    void test();
 private:
     Ui::MainWindow* ui;
 
