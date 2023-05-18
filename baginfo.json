@@ -1,22 +1,22 @@
 {
-	"Settings": {
-        "name" : "Settings",
-		"height" : 350,
-		"width" : 300
-	},
-	"Small": {
-        "name" : "Small",
-		"height" : 150,
-		"width" : 300
-	},
-	"Medium": {
-        "name" : "Medium",
-		"height" : 150,
-		"width" : 300
-	},
-	"Large": {
-        "name" : "Large",
-		"height" : 150,
-		"width" : 300
-	}
+    "Large": {
+        "height": 150,
+        "name": "Large",
+        "width": 300
+    },
+    "Medium": {
+        "height": 150,
+        "name": "Medium",
+        "width": 300
+    },
+    "Settings": {
+        "height": 351,
+        "name": "Settings",
+        "width": 300
+    },
+    "Small": {
+        "height": 150,
+        "name": "Small",
+        "width": 300
+    }
 }

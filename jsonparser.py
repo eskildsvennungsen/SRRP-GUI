@@ -3,7 +3,7 @@ import os
 import time
 
 def parseJSON(input):
-    with open(os.path.join(os.path.dirname(__file__), "baginfo.json")) as f:
+    with open(os.path.join(os.path.dirname(__file__), "build/baginfo.json")) as f:
         data = json.load(f)
         height = data['Settings']['height']
         f.close()
