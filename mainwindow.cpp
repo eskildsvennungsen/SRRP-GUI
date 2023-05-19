@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->generalFrame->setMinimumSize(QSize(950,0));
-    activateHistory();
+    activateGeneral();
 
     QObject::connect(ui->settings, SIGNAL(clicked()), this, SLOT(activateSettings()));
     QObject::connect(ui->history, SIGNAL(clicked()), this, SLOT(activateHistory()));

@@ -3,29 +3,41 @@
 
 GeneralWindow::GeneralWindow(QWidget* parent)
     : QWidget(parent),
-    fileTableModel(new QStandardItemModel(this)),
+    fileTableModel(new QStandardItemModel),
     tableView(new QTableView(this)),
-    fileWatcher(new QFileSystemWatcher(this))
+    fileWatcher(new QFileSystemWatcher),
+    filepath("tests/test0.csv"),
+    progressBar(new QProgressBar),
+    mainLayout(new QVBoxLayout(this))
 {
-    fileWatcher->addPath("tests/Settings_bagtest.csv");
+    fileWatcher->addPath(filepath);
 
-    tableView = new QTableView(this);
     tableView->setObjectName("tableView");
-    tableView->setMinimumSize(parent->size());
+    tableView->setMinimumSize(parent->size() - QSize(0,30));
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    readFile(QString("tests/Settings_bagtest.csv"));
+    readFile(QString(filepath));
 
-    QObject::connect(fileWatcher, SIGNAL(fileChanged(const QString &)), this, SLOT(readFile(const QString &)));
+    QPalette p = palette();
+    p.setColor(QPalette::Highlight, Qt::darkGreen);
+    progressBar->setPalette(p);
+
+    mainLayout->setContentsMargins(0,0,0,0);
+    mainLayout->addWidget(tableView);
+    mainLayout->addSpacing(5);
+    mainLayout->addWidget(progressBar);
+
+    QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readFile(QString)));
 }
 
 GeneralWindow::~GeneralWindow(){
     delete fileTableModel;
     delete tableView;
     delete fileWatcher;
+    delete progressBar;
 }
 
-void GeneralWindow::readFile(const QString& fileChanged){
+void GeneralWindow::readFile(QString fileChanged){
     delete fileTableModel;
     fileTableModel = new QStandardItemModel;
 
@@ -33,6 +45,7 @@ void GeneralWindow::readFile(const QString& fileChanged){
 
     if(file.open(QIODevice::ReadOnly)){
         int lineIndex = 0;
+        int faultyBags = 0;
         QTextStream in(&file);
 
         while(!in.atEnd()){
@@ -45,10 +58,11 @@ void GeneralWindow::readFile(const QString& fileChanged){
                 QStandardItem* item = new QStandardItem(token);
                 if(colIndex == 3){
                     if(token == '0'){
-                        item->setBackground(QBrush(QColor(Qt::green), Qt::SolidPattern));
+                        item->setBackground(QBrush(QColor(Qt::darkGreen), Qt::SolidPattern));
                     } else if(token != "Reason"){
                         item->setBackground(QBrush(QColor(Qt::red), Qt::SolidPattern));
                         item->setForeground(QBrush(Qt::white));
+                        faultyBags++;
                     }
                 }
                 if(lineIndex == 0){
@@ -61,7 +75,10 @@ void GeneralWindow::readFile(const QString& fileChanged){
             lineIndex++;
         }
         file.close();
+        progressBar->setMaximum(lineIndex - 1);
+        progressBar->setValue(lineIndex - 1 - faultyBags);
     }
+
     /*Setting horizontal headers creates blank row, this removes it*/
     fileTableModel->removeRow(0);
     tableView->setModel(fileTableModel);

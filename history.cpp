@@ -7,34 +7,34 @@ HistoryWindow::HistoryWindow(QWidget *parent)
     : QWidget{parent}
     , fileTableModel(new QStandardItemModel)
     , fileListModel(new QFileSystemModel)
-    , horizontalLayout(new QHBoxLayout)
-    , horizontalLayout_2(new QHBoxLayout)
+    , horizontalLayout(new QHBoxLayout(this))
+    , verticalLayout(new QVBoxLayout)
     , fileList(new QListView)
     , tableView(new QTableView)
+    , progressBar(new QProgressBar)
 {
-    horizontalLayout_2 = new QHBoxLayout(this);
-    horizontalLayout_2->setObjectName("horizontalLayout_2");
-    horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-    fileList = new QListView(this);
+    horizontalLayout->setObjectName("horizontalLayout");
+    horizontalLayout->setContentsMargins(0, 0, 0, 0);
     fileList->setObjectName("fileList");
     fileList->setViewMode(QListView::ListMode);
 
-    QString directory = qApp->applicationDirPath() + "/tests";
+    QString directory = qApp->applicationDirPath() + "tests/";
     fileList->setModel(fileListModel);
     fileList->setRootIndex(fileListModel->setRootPath(directory));
 
-    horizontalLayout_2->addWidget(fileList);
-
-    tableView = new QTableView(this);
     tableView->setObjectName("tableView");
-    tableView->setMinimumSize(QSize(700, 0));
-
-    horizontalLayout_2->addWidget(tableView);
+    tableView->setMinimumSize(parent->size() - QSize(150, 0));
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    horizontalLayout->addWidget(this);
+    QPalette p = palette();
+    p.setColor(QPalette::Mid, Qt::darkGreen);
+    progressBar->setPalette(p);
 
-    tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    verticalLayout->addWidget(tableView);
+    verticalLayout->addWidget(progressBar);
+
+    horizontalLayout->addWidget(fileList);
+    horizontalLayout->addLayout(verticalLayout);
 
     QObject::connect(fileList, SIGNAL(clicked(QModelIndex)), this, SLOT(readFile(QModelIndex)));
 }
@@ -43,9 +43,10 @@ HistoryWindow::~HistoryWindow(){
     delete fileTableModel;
     delete fileListModel;
     delete horizontalLayout;
-    delete horizontalLayout_2;
     delete fileList;
     delete tableView;
+    delete verticalLayout;
+    delete progressBar;
 }
 
 void HistoryWindow::readFile(QModelIndex index){
@@ -58,6 +59,7 @@ void HistoryWindow::readFile(QModelIndex index){
 
     if(file.open(QIODevice::ReadOnly)){
         int lineIndex = 0;
+        int faultyBags = 0;
         QTextStream in(&file);
 
         while(!in.atEnd()){
@@ -70,10 +72,11 @@ void HistoryWindow::readFile(QModelIndex index){
                 QStandardItem* item = new QStandardItem(token);
                 if(colIndex == 3){
                     if(token == '0'){
-                        item->setBackground(QBrush(QColor(Qt::green), Qt::SolidPattern));
+                        item->setBackground(QBrush(QColor(Qt::darkGreen), Qt::SolidPattern));
                     } else if(token != "Reason"){
-                        item->setBackground(QBrush(QColor(Qt::red), Qt::SolidPattern));
+                        item->setBackground(QBrush(QColor(Qt::darkRed), Qt::SolidPattern));
                         item->setForeground(QBrush(Qt::white));
+                        faultyBags++;
                     }
                 }
                 if(lineIndex == 0){
@@ -86,6 +89,8 @@ void HistoryWindow::readFile(QModelIndex index){
             lineIndex++;
         }
         file.close();
+        progressBar->setMaximum(lineIndex - 1);
+        progressBar->setValue(lineIndex - 1 - faultyBags);
     }
     /*Setting horizontal headers creates blank row, this removes it*/
     fileTableModel->removeRow(0);
