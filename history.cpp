@@ -24,7 +24,7 @@ HistoryWindow::HistoryWindow(QWidget *parent)
     fileList->setRootIndex(fileListModel->setRootPath(directory));
 
     tableView->setObjectName("tableView");
-    tableView->setMinimumSize(parent->size() - QSize(150, 0));
+    tableView->setMinimumSize(parent->size() - QSize(150, 50));
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     QPalette p = palette();
@@ -60,8 +60,8 @@ void HistoryWindow::readFile(QModelIndex index){
     QFile file(tr("%1/tests/%2").arg(path, itemText));
 
     if(file.open(QIODevice::ReadOnly)){
-        int lineIndex = 0;
-        int faultyBags = 0;
+        double lineIndex = 0;
+        double faultyBags = 0;
         QTextStream in(&file);
 
         while(!in.atEnd()){
@@ -72,6 +72,7 @@ void HistoryWindow::readFile(QModelIndex index){
             for(auto& token : lineToken){
 
                 QStandardItem* item = new QStandardItem(token);
+                item->setTextAlignment(Qt::AlignCenter);
                 if(colIndex == 3){
                     if(token == '0'){
                         item->setBackground(QBrush(QColor(Qt::darkGreen), Qt::SolidPattern));
@@ -92,7 +93,8 @@ void HistoryWindow::readFile(QModelIndex index){
         }
         file.close();
         progressBar->setMaximum(lineIndex - 1);
-        progressBar->setValue(lineIndex - 1 - faultyBags);
+        double progress = lineIndex - 1 - faultyBags;
+        progressBar->setValue(progress);
     }
     /*Setting horizontal headers creates blank row, this removes it*/
     fileTableModel->removeRow(0);

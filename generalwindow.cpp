@@ -13,13 +13,13 @@ GeneralWindow::GeneralWindow(QWidget* parent)
     fileWatcher->addPath(filepath);
 
     tableView->setObjectName("tableView");
-    tableView->setMinimumSize(parent->size() - QSize(0,30));
+    tableView->setMinimumSize(parent->size() - QSize(0,50));
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     readFile(QString(filepath));
 
     QPalette p = palette();
-    p.setColor(QPalette::Highlight, Qt::darkGreen);
+    p.setColor(QPalette::Highlight, Qt::green);
     p.setColor(QPalette::Base, Qt::darkRed);
     progressBar->setPalette(p);
 
@@ -57,6 +57,7 @@ void GeneralWindow::readFile(QString fileChanged){
             for(auto& token : lineToken){
 
                 QStandardItem* item = new QStandardItem(token);
+                item->setTextAlignment(Qt::AlignCenter);
                 if(colIndex == 3){
                     if(token == '0'){
                         item->setBackground(QBrush(QColor(Qt::darkGreen), Qt::SolidPattern));

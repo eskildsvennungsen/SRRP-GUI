@@ -25,8 +25,12 @@ set(PROJECT_SOURCES
         history.cpp
         generalwindow.h
         generalwindow.cpp
+        actuatorcontrol.h
         ${TS_FILES}
 )
+
+#add_library(L298N)
+#add_subdirectory(L298N/src)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SRRP-GUI
@@ -55,7 +59,7 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Concurrent)
+target_link_libraries(SRRP-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(SRRP-GUI PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

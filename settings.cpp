@@ -2,7 +2,6 @@
 #include "qobjectdefs.h"
 #include <QDebug>
 #include <QFuture>
-#include <QtConcurrent>
 #include <stdlib.h>
 #include <QIcon>
  #include <QLineEdit>
@@ -10,7 +9,8 @@
 #include <QLabel>
 #include <QFormLayout>
 #include <QDialogButtonBox>
-
+#include "qapplication.h"
+// #include <L298N>
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
@@ -21,7 +21,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     mainLayout->setContentsMargins(0,0,0,0);
     readBagInfo("baginfo.json");
     fileWatcher->addPath(QString("baginfo.json"));
-    this->setMinimumSize(parent->size());
+    this->setMinimumSize(parent->size() - QSize(0,30));
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
@@ -35,8 +35,8 @@ SettingsWindow::~SettingsWindow(){
 
 
 bool SettingsWindow::readBagInfo(const QString& path){
-    QPushButton* custom = new QPushButton(QIcon("res/40031.png"), "", this);
-    custom->setIconSize(QSize(15, 15));
+    QPushButton* custom = new QPushButton(QIcon(tr("%1/res/settings_white_24dp.svg").arg(qApp->applicationDirPath())), "", this);
+    custom->setIconSize(QSize(25, 25));
     custom->setObjectName("Settings");
     custom->setMaximumSize(50,50);
 
@@ -112,8 +112,6 @@ void SettingsWindow::buttonPressed(int index){
         QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(updateBagInfo()));
         QObject::connect(buttonBox, &QDialogButtonBox::accepted, &tmp, &QDialog::accept);
         QObject::connect(buttonBox, &QDialogButtonBox::rejected, &tmp, &QDialog::reject);
-       //QObject::connect(height, SIGNAL(textEdited(const QString &)), this, SLOT(updateBagInfo(const QString &)));
-       //QObject::connect(width, SIGNAL(textChanged(const QString &)), this, SLOT(updateBagInfo(const QString &)));
 
         v_layout->addLayout(layout);
         v_layout->addWidget(buttonBox);

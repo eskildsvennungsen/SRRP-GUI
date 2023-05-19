@@ -1,0 +1,8 @@
+#ifndef AKTUATORCONTROL_H
+#define AKTUATORCONTROL_H
+
+namespace ACCTRL{
+
+}
+
+#endif // AKTUATORCONTROL_H
