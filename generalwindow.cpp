@@ -20,6 +20,7 @@ GeneralWindow::GeneralWindow(QWidget* parent)
 
     QPalette p = palette();
     p.setColor(QPalette::Highlight, Qt::darkGreen);
+    p.setColor(QPalette::Base, Qt::darkRed);
     progressBar->setPalette(p);
 
     mainLayout->setContentsMargins(0,0,0,0);

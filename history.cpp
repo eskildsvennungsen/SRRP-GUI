@@ -18,7 +18,8 @@ HistoryWindow::HistoryWindow(QWidget *parent)
     fileList->setObjectName("fileList");
     fileList->setViewMode(QListView::ListMode);
 
-    QString directory = qApp->applicationDirPath() + "tests/";
+    QString directory = qApp->applicationDirPath() + "/tests/";
+
     fileList->setModel(fileListModel);
     fileList->setRootIndex(fileListModel->setRootPath(directory));
 
@@ -27,7 +28,8 @@ HistoryWindow::HistoryWindow(QWidget *parent)
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     QPalette p = palette();
-    p.setColor(QPalette::Mid, Qt::darkGreen);
+    p.setColor(QPalette::Highlight, Qt::green);
+    p.setColor(QPalette::Base, Qt::darkRed);
     progressBar->setPalette(p);
 
     verticalLayout->addWidget(tableView);
@@ -42,10 +44,10 @@ HistoryWindow::HistoryWindow(QWidget *parent)
 HistoryWindow::~HistoryWindow(){
     delete fileTableModel;
     delete fileListModel;
+    delete verticalLayout;
     delete horizontalLayout;
     delete fileList;
     delete tableView;
-    delete verticalLayout;
     delete progressBar;
 }
 

@@ -21,6 +21,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     mainLayout->setContentsMargins(0,0,0,0);
     readBagInfo("baginfo.json");
     fileWatcher->addPath(QString("baginfo.json"));
+    this->setMinimumSize(parent->size());
 
     QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
@@ -149,7 +150,6 @@ void SettingsWindow::updateBagInfo(){
             new_width = x->findChildren<QLineEdit*>().at(1)->text();
         }
     }
-
     m_addvalue.insert("height", new_height.toDouble());
     m_addvalue.insert("width", new_width.toDouble());
 
