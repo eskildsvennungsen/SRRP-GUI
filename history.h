@@ -8,7 +8,8 @@
 #include <QHBoxLayout>
 #include <QTableView>
 #include <QListView>
-
+#include <QProgressBar>
+#include <QVBoxLayout>
 
 /*!
  * @brief History related features
@@ -43,9 +44,10 @@ public:
     QStandardItemModel* fileTableModel;
     QFileSystemModel* fileListModel;
     QHBoxLayout* horizontalLayout;
-    QHBoxLayout* horizontalLayout_2;
+    QVBoxLayout* verticalLayout;
     QListView* fileList;
     QTableView* tableView;
+    QProgressBar* progressBar;
 
 };
 

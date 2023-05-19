@@ -14,9 +14,9 @@
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
+    , buttons(new QButtonGroup)
     , fileWatcher(new QFileSystemWatcher(this))
     , mainLayout(new QHBoxLayout(this))
-    , buttons(new QButtonGroup)
 {
     mainLayout->setContentsMargins(0,0,0,0);
     readBagInfo("baginfo.json");

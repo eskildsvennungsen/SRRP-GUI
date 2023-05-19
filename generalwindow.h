@@ -6,6 +6,8 @@
 #include <QTableView>
 #include <qfilesystemwatcher.h>
 #include <QFile>
+#include <QProgressBar>
+#include <QVBoxLayout>
 
 class GeneralWindow : public QWidget
 {
@@ -15,12 +17,16 @@ public:
     ~GeneralWindow();
 
 public slots:
-    void readFile(const QString& file);
+    void readFile(QString file);
 
 private:
     QStandardItemModel* fileTableModel;
     QTableView* tableView;
     QFileSystemWatcher* fileWatcher;
+    QString filepath;
+    QProgressBar* progressBar;
+    QVBoxLayout* mainLayout;
+
 };
 
 #endif // GENERALWINDOW_H
