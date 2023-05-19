@@ -52,7 +52,7 @@ public slots:
     */
     void buttonPressed(int index);
 
-    void updateBagInfo(const QString& text);
+    virtual void updateBagInfo();
 
 private:
     BagInfo getBag(const QString& name);

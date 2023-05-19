@@ -104,13 +104,15 @@ void SettingsWindow::buttonPressed(int index){
         layout->addRow(new QLabel("Height"), height);
         layout->addRow(new QLabel("Width"), width);
 
+
         QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                          | QDialogButtonBox::Cancel);
 
+        QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(updateBagInfo()));
         QObject::connect(buttonBox, &QDialogButtonBox::accepted, &tmp, &QDialog::accept);
         QObject::connect(buttonBox, &QDialogButtonBox::rejected, &tmp, &QDialog::reject);
-        QObject::connect(height, SIGNAL(textChanged(const QString &)), this, SLOT(updateBagInfo(const QString &)));
-        QObject::connect(width, SIGNAL(textChanged(const QString &)), this, SLOT(updateBagInfo(const QString &)));
+       //QObject::connect(height, SIGNAL(textEdited(const QString &)), this, SLOT(updateBagInfo(const QString &)));
+       //QObject::connect(width, SIGNAL(textChanged(const QString &)), this, SLOT(updateBagInfo(const QString &)));
 
         v_layout->addLayout(layout);
         v_layout->addWidget(buttonBox);
@@ -129,7 +131,7 @@ BagInfo SettingsWindow::getBag(const QString& name){
     return BagInfo("", 0, 0);
 }
 
-void SettingsWindow::updateBagInfo(const QString& text){
+void SettingsWindow::updateBagInfo(){
     QFile file("baginfo.json");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonParseError JsonParseError;
@@ -139,11 +141,17 @@ void SettingsWindow::updateBagInfo(const QString& text){
     QJsonValueRef ref = RootObject.find("Settings").value();
     QJsonObject m_addvalue = ref.toObject();
 
-    if(QObject::sender()->objectName() == QString("heightBox")){
-        m_addvalue.insert("height", text.toDouble());
-    } else{
-        m_addvalue.insert("width", text.toDouble());
+    QString new_height = 0;
+    QString new_width = 0;
+    for(auto& x : this->children()){
+        if(!x->findChildren<QLineEdit*>().isEmpty()){
+            new_height = x->findChildren<QLineEdit*>().at(0)->text();
+            new_width = x->findChildren<QLineEdit*>().at(1)->text();
+        }
     }
+
+    m_addvalue.insert("height", new_height.toDouble());
+    m_addvalue.insert("width", new_width.toDouble());
 
     ref=m_addvalue;
     JsonDocument.setObject(RootObject);
