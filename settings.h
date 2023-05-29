@@ -52,7 +52,12 @@ public slots:
     */
     void buttonPressed(int index);
 
+    /*!
+     * @brief Updates JSON file with new width/heigth
+    */ 
     virtual void updateBagInfo();
+
+    void updateGlobals();
 
 private:
     BagInfo getBag(const QString& name);

@@ -10,7 +10,7 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include "qapplication.h"
-// #include <L298N>
+
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QWidget{parent}
@@ -21,10 +21,10 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     mainLayout->setContentsMargins(0,0,0,0);
     readBagInfo("baginfo.json");
     fileWatcher->addPath(QString("baginfo.json"));
-    this->setMinimumSize(parent->size() - QSize(0,30));
+    this->setMinimumSize(parent->size() - QSize(0, 10));
 
-    QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
     QObject::connect(buttons, SIGNAL(idClicked(int)), this, SLOT(buttonPressed(int)));
+    QObject::connect(fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(readBagInfo(QString)));
 }
 
 SettingsWindow::~SettingsWindow(){
@@ -35,10 +35,17 @@ SettingsWindow::~SettingsWindow(){
 
 
 bool SettingsWindow::readBagInfo(const QString& path){
+    if(!buttons->buttons().isEmpty()){
+        qDeleteAll(buttons->buttons());
+        qDeleteAll(mainLayout->children());
+        bags.clear();
+    }
+
     QPushButton* custom = new QPushButton(QIcon(tr("%1/res/settings_white_24dp.svg").arg(qApp->applicationDirPath())), "", this);
     custom->setIconSize(QSize(25, 25));
     custom->setObjectName("Settings");
     custom->setMaximumSize(50,50);
+    buttons->addButton(custom);
 
     QFile inFile(path);
 
@@ -49,18 +56,37 @@ bool SettingsWindow::readBagInfo(const QString& path){
     QJsonParseError errorPtr;
     QJsonDocument doc = QJsonDocument::fromJson(data, &errorPtr);
     if (doc.isNull()) {
-        qDebug() << "Parse failed";
         qDebug() << errorPtr.errorString();
         return 0;
     }
+
+    QVBoxLayout* v_layout = new QVBoxLayout();
+    QHBoxLayout* h_layout = new QHBoxLayout();
+
+    h_layout->addWidget(custom);
+
     QJsonObject rootObj = doc.object();
 
-    if(!buttons->buttons().isEmpty()){
-        qDeleteAll(buttons->buttons());
-        bags.clear();
+    QJsonObject globalSettings = rootObj.value("Global").toObject();
+    QFormLayout* layout = new QFormLayout();
+
+    for(auto i = globalSettings.begin(); i != globalSettings.end(); i++){
+        QLineEdit* tmp = new QLineEdit(tr("%1").arg(i.value().toInt()));
+        tmp->setObjectName(tr("%1").arg(i.key()));
+        tmp->setMaximumWidth(200);
+        layout->addRow(new QLabel(tr("%1").arg(i.key())), tmp);
     }
+    layout->setFormAlignment(Qt::AlignHCenter);
+
+    QPushButton* nice = new QPushButton(QString("Update"));
+    nice->setMaximumWidth(200);
+
+    layout->addWidget(nice);
+
+    QObject::connect(nice, SIGNAL(clicked()), this, SLOT(updateGlobals()));
 
     for(const QJsonValue& val : rootObj){
+        if(val.toObject() == globalSettings) continue;
         QString name = val.toObject().value("name").toString();
         int width = val.toObject().value("width").toInt();
         int heigth = val.toObject().value("height").toInt();
@@ -74,12 +100,16 @@ bool SettingsWindow::readBagInfo(const QString& path){
         tmp->setToolTip(QString("Width: %1\nHeigth: %2").arg(bag.width).arg(bag.height));
         tmp->setMaximumSize(QSize(150,50));
         buttons->addButton(tmp);
-        mainLayout->addWidget(tmp);
+        h_layout->addWidget(tmp);
     }
 
-    mainLayout->addWidget(custom);
-    buttons->addButton(custom);
+    v_layout->addLayout(h_layout);
+    v_layout->addSpacing(10);
+    v_layout->addLayout(layout);
+    v_layout->setAlignment(Qt::AlignCenter);
+    mainLayout->addLayout(v_layout);
     inFile.close();
+
 
     return 1;
 }
@@ -120,7 +150,6 @@ void SettingsWindow::buttonPressed(int index){
         tmp.exec();
     }
 
-    /* auto task = QtConcurrent::task([]{ system("python ac.py"); }).spawn(); Leave it be if we ever need tasking */
 }
 
 BagInfo SettingsWindow::getBag(const QString& name){
@@ -151,6 +180,27 @@ void SettingsWindow::updateBagInfo(){
     m_addvalue.insert("height", new_height.toDouble());
     m_addvalue.insert("width", new_width.toDouble());
 
+    ref=m_addvalue;
+    JsonDocument.setObject(RootObject);
+    file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
+    file.write(JsonDocument.toJson());
+    file.close();
+}
+
+void SettingsWindow::updateGlobals(){
+    QFile file("baginfo.json");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonParseError JsonParseError;
+    QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);
+    file.close();
+    QJsonObject RootObject = JsonDocument.object();
+    QJsonValueRef ref = RootObject.find("Global").value();
+    QJsonObject m_addvalue = ref.toObject();
+
+    QList<QLineEdit *> widgets = this->parent()->findChildren<QLineEdit *>();
+    foreach(auto *w, widgets) {
+        m_addvalue.insert(tr("%1").arg(w->objectName()), w->text().toInt());
+    }
     ref=m_addvalue;
     JsonDocument.setObject(RootObject);
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);

@@ -14,6 +14,7 @@ sudo pacman -S - < qtreq.txt
 #### Build:
 ```console
 cmake -S . -B /path/to/build
-make -C /path/to/build
+cd /path/to/build
+make && ./SRRP-GUI
 ```
 

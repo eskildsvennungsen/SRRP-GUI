@@ -1,4 +1,10 @@
 {
+    "Global": {
+        "Distance-first": 19,
+        "RPM": 40,
+        "left-offset": 21,
+        "right-offset": 100
+    },
     "Large": {
         "height": 150,
         "name": "Large",
@@ -12,11 +18,16 @@
     "Settings": {
         "height": 300,
         "name": "Settings",
-        "width": 300
+        "width": 100
     },
     "Small": {
         "height": 150,
         "name": "Small",
+        "width": 300
+    },
+    "Test": {
+        "height": 150,
+        "name": "heeh",
         "width": 300
     }
 }

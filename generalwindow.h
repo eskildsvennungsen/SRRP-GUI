@@ -9,6 +9,10 @@
 #include <QProgressBar>
 #include <QVBoxLayout>
 
+/*!
+* @brief Represents the general window.
+*/
+
 class GeneralWindow : public QWidget
 {
     Q_OBJECT
@@ -17,6 +21,10 @@ public:
     ~GeneralWindow();
 
 public slots:
+    /*!
+    * @brief Reads file to be displayed.
+    * @param file Relative path to file.
+    */
     void readFile(QString file);
 
 private:
