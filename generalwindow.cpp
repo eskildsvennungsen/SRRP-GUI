@@ -13,7 +13,7 @@ GeneralWindow::GeneralWindow(QWidget* parent)
     fileWatcher->addPath(filepath);
 
     tableView->setObjectName("tableView");
-    tableView->setMinimumSize(parent->size() - QSize(0,50));
+    tableView->setMinimumSize(parent->size() - QSize(0,30));
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     readFile(QString(filepath));

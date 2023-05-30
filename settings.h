@@ -37,7 +37,9 @@ class SettingsWindow : public QWidget
 public:
     explicit SettingsWindow(QWidget *parent = nullptr);
     ~SettingsWindow();
-
+    QFormLayout* globalSettingsForm(QJsonObject, QString);
+    void modifyJsonValue(QJsonValue& destValue, const QString& path, const QJsonValue& newValue);
+    void modifyJsonValue(QJsonDocument& doc, const QString& path, const QJsonValue& newValue);
 public slots:
     /*!
      * @brief Reads from json file and displays buttons

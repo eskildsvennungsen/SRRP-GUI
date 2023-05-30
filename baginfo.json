@@ -1,9 +1,17 @@
 {
     "Global": {
-        "Distance-first": 19,
-        "RPM": 40,
-        "left-offset": 21,
-        "right-offset": 100
+        "mod1": {
+            "left-offset": 20,
+            "right-offset": 30
+        },
+        "mod2": {
+            "left-offset": 10,
+            "right-offset": 10
+        },
+        "mod3": {
+            "left-offset": 10,
+            "right-offset": 10
+        }
     },
     "Large": {
         "height": 150,

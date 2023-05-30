@@ -8,6 +8,11 @@
 #include <QDialog>
 #include <QLabel>
 #include <QDialogButtonBox>
+ #include <QToolButton>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
 #include "qapplication.h"
 
 
@@ -61,43 +66,18 @@ bool SettingsWindow::readBagInfo(const QString& path){
 
     QVBoxLayout* v_layout = new QVBoxLayout();
     QHBoxLayout* h_layout = new QHBoxLayout();
+    QHBoxLayout* form_layout = new QHBoxLayout();
 
     h_layout->addWidget(custom);
 
     QJsonObject rootObj = doc.object();
-
     QJsonObject globalSettings = rootObj.value("Global").toObject();
-
-    QList<QLabel *> label_for_deletion = this->findChildren<QLabel *>();
-    QList<QLineEdit *> lineedit_for_deletiong = this->parent()->findChildren<QLineEdit *>();
-    foreach(auto& x, lineedit_for_deletiong){
-        delete x;
-    }
-    foreach(auto& x, label_for_deletion){
-        delete x;
-    }
-    if(this->findChild<QPushButton*>(QString("formSubmit"))){
-        delete this->findChild<QPushButton*>(QString("formSubmit"));
-    }
-
-    QFormLayout* form = new QFormLayout();
-
-    for(auto i = globalSettings.begin(); i != globalSettings.end(); i++){
-        QLineEdit* tmp = new QLineEdit(tr("%1").arg(i.value().toInt()));
-        tmp->setObjectName(tr("%1").arg(i.key()));
-        tmp->setMaximumWidth(200);
-        QLabel* label = new QLabel(tr("%1").arg(i.key()));
-        form->addRow(label, tmp);
-    }
-    form->setFormAlignment(Qt::AlignHCenter);
-
-    QPushButton* nice = new QPushButton(QString("Update"));
-    nice->setObjectName("formSubmit");
-    nice->setMaximumWidth(200);
-
-    form->addWidget(nice);
-
-    QObject::connect(nice, SIGNAL(clicked()), this, SLOT(updateGlobals()));
+    QFormLayout* form = globalSettingsForm(globalSettings, QString("mod1"));
+    QFormLayout* form2 = globalSettingsForm(globalSettings, QString("mod2"));
+    QFormLayout* form3 = globalSettingsForm(globalSettings, QString("mod3"));
+    form_layout->addLayout(form);
+    form_layout->addLayout(form2);
+    form_layout->addLayout(form3);
 
     for(const QJsonValue& val : rootObj){
         if(val.toObject() == globalSettings) continue;
@@ -119,11 +99,10 @@ bool SettingsWindow::readBagInfo(const QString& path){
 
     v_layout->addLayout(h_layout);
     v_layout->addSpacing(10);
-    v_layout->addLayout(form);
+    v_layout->addLayout(form_layout);
     v_layout->setAlignment(Qt::AlignCenter);
     mainLayout->addLayout(v_layout);
     inFile.close();
-
 
     return 1;
 }
@@ -205,24 +184,153 @@ void SettingsWindow::updateGlobals(){
     QFile file("baginfo.json");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QJsonParseError JsonParseError;
-    QJsonDocument JsonDocument = QJsonDocument::fromJson(file.readAll(), &JsonParseError);
-    file.close();
-    QJsonObject RootObject = JsonDocument.object();
-    QJsonValueRef ref = RootObject.find("Global").value();
-    QJsonObject m_addvalue = ref.toObject();
-
     QList<QLineEdit *> widgets = this->parent()->findChildren<QLineEdit *>();
+    QJsonDocument doc = QJsonDocument::fromJson(QByteArray::fromStdString(file.readAll().toStdString()));
+    file.close();
     foreach(auto *w, widgets) {
-        m_addvalue.insert(tr("%1").arg(w->objectName()), w->text().toInt());
+        if(w->objectName().contains(this->sender()->objectName())){
+            modifyJsonValue(doc, tr("Global.%1.%2").arg(this->sender()->objectName()).arg(w->objectName().remove(this->sender()->objectName())), w->text().toInt());
+        }
     }
-    ref=m_addvalue;
-    JsonDocument.setObject(RootObject);
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
-    file.write(JsonDocument.toJson());
+    file.write(doc.toJson());
     file.close();
 }
 
+QFormLayout* SettingsWindow::globalSettingsForm(QJsonObject inputObject, QString module){
+    QList<QLabel *> label_for_deletion = this->findChildren<QLabel *>();
+    QList<QLineEdit *> lineedit_for_deletiong = this->parent()->findChildren<QLineEdit *>();
+    foreach(auto& x, lineedit_for_deletiong){
+        delete x;
+    }
+    foreach(auto& x, label_for_deletion){
+        delete x;
+    }
+    if(this->findChild<QPushButton*>(QString(module))){
+        delete this->findChild<QPushButton*>(QString(module));
+    }
 
+    QFormLayout* form = new QFormLayout();
+    QJsonObject globalSettings = inputObject.value(module).toObject();
+
+    for(auto i = globalSettings.begin(); i != globalSettings.end(); i++){
+        QLineEdit* tmp = new QLineEdit(tr("%1").arg(i.value().toInt()));
+        tmp->setObjectName(QString("%1%2").arg(i.key()).arg(module));
+        tmp->setMaximumWidth(200);
+        QLabel* label = new QLabel(tr("%1").arg(i.key()));
+        form->addRow(label, tmp);
+    }
+    form->setFormAlignment(Qt::AlignHCenter);
+
+    QPushButton* button = new QPushButton(QString("Update %1").arg(module));
+    button->setObjectName(module);
+    button->setMaximumWidth(200);
+
+    QObject::connect(button, SIGNAL(clicked()), this, SLOT(updateGlobals()));
+
+    form->addWidget(button);
+
+    return form;
+}
+
+void SettingsWindow::modifyJsonValue(QJsonValue& destValue, const QString& path, const QJsonValue& newValue)
+{
+    const int indexOfDot = path.indexOf('.');
+    const QString dotPropertyName = path.left(indexOfDot);
+    const QString dotSubPath = indexOfDot > 0 ? path.mid(indexOfDot + 1) : QString();
+
+    const int indexOfSquareBracketOpen = path.indexOf('[');
+    const int indexOfSquareBracketClose = path.indexOf(']');
+
+    const int arrayIndex = path.mid(indexOfSquareBracketOpen + 1, indexOfSquareBracketClose - indexOfSquareBracketOpen - 1).toInt();
+
+    const QString squareBracketPropertyName = path.left(indexOfSquareBracketOpen);
+    const QString squareBracketSubPath = indexOfSquareBracketClose > 0 ? (path.mid(indexOfSquareBracketClose + 1)[0] == '.' ? path.mid(indexOfSquareBracketClose + 2) : path.mid(indexOfSquareBracketClose + 1)) : QString();
+
+    // determine what is first in path. dot or bracket
+    bool useDot = true;
+    if (indexOfDot >= 0) // there is a dot in path
+    {
+        if (indexOfSquareBracketOpen >= 0) // there is squarebracket in path
+        {
+            if (indexOfDot > indexOfSquareBracketOpen)
+                useDot = false;
+            else
+                useDot = true;
+        }
+        else
+            useDot = true;
+    }
+    else
+    {
+        if (indexOfSquareBracketOpen >= 0)
+            useDot = false;
+        else
+            useDot = true; // acutally, id doesn't matter, both dot and square bracket don't exist
+    }
+
+    QString usedPropertyName = useDot ? dotPropertyName : squareBracketPropertyName;
+    QString usedSubPath = useDot ? dotSubPath : squareBracketSubPath;
+
+    QJsonValue subValue;
+    if (destValue.isArray())
+        subValue = destValue.toArray()[usedPropertyName.toInt()];
+    else if (destValue.isObject())
+        subValue = destValue.toObject()[usedPropertyName];
+    else
+        qDebug() << "oh, what should i do now with the following value?! " << destValue;
+
+    if(usedSubPath.isEmpty())
+    {
+        subValue = newValue;
+    }
+    else
+    {
+        if (subValue.isArray())
+        {
+            QJsonArray arr = subValue.toArray();
+            QJsonValue arrEntry = arr[arrayIndex];
+            modifyJsonValue(arrEntry,usedSubPath,newValue);
+            arr[arrayIndex] = arrEntry;
+            subValue = arr;
+        }
+        else if (subValue.isObject())
+            modifyJsonValue(subValue,usedSubPath,newValue);
+        else
+            subValue = newValue;
+    }
+
+    if (destValue.isArray())
+    {
+        QJsonArray arr = destValue.toArray();
+        arr[arrayIndex] = subValue;
+        destValue = arr;
+    }
+    else if (destValue.isObject())
+    {
+        QJsonObject obj = destValue.toObject();
+        obj[usedPropertyName] = subValue;
+        destValue = obj;
+    }
+    else
+        destValue = newValue;
+}
+
+void SettingsWindow::modifyJsonValue(QJsonDocument& doc, const QString& path, const QJsonValue& newValue)
+{
+    QJsonValue val;
+    if (doc.isArray())
+        val = doc.array();
+    else
+        val = doc.object();
+
+    modifyJsonValue(val,path,newValue);
+
+    if (val.isArray())
+        doc = QJsonDocument(val.toArray());
+    else
+        doc = QJsonDocument(val.toObject());
+}
 
 
 
