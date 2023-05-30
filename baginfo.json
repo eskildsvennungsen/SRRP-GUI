@@ -1,16 +1,22 @@
 {
     "Global": {
         "mod1": {
-            "left-offset": 20,
-            "right-offset": 30
+            "left-offset": 30,
+            "right-offset": 30,
+            "distance": 0,
+            "RPM": 30
         },
         "mod2": {
-            "left-offset": 10,
-            "right-offset": 10
+            "left-offset": 20,
+            "right-offset": 5,
+            "distance": 0,
+            "RPM": 30
         },
         "mod3": {
-            "left-offset": 10,
-            "right-offset": 10
+            "left-offset": 100,
+            "right-offset": 10,
+            "distance": 0,
+            "RPM": 30
         }
     },
     "Large": {
