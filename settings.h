@@ -12,6 +12,8 @@
 #include <QJsonArray>
 #include <QFileSystemWatcher>
 #include <QButtonGroup>
+#include <QFormLayout>
+
 
 
 /*!

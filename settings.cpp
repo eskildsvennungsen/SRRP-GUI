@@ -7,7 +7,6 @@
  #include <QLineEdit>
 #include <QDialog>
 #include <QLabel>
-#include <QFormLayout>
 #include <QDialogButtonBox>
 #include "qapplication.h"
 
@@ -35,7 +34,7 @@ SettingsWindow::~SettingsWindow(){
 
 
 bool SettingsWindow::readBagInfo(const QString& path){
-    if(!buttons->buttons().isEmpty()){
+    if(!mainLayout->isEmpty()){
         qDeleteAll(buttons->buttons());
         qDeleteAll(mainLayout->children());
         bags.clear();
@@ -68,20 +67,35 @@ bool SettingsWindow::readBagInfo(const QString& path){
     QJsonObject rootObj = doc.object();
 
     QJsonObject globalSettings = rootObj.value("Global").toObject();
-    QFormLayout* layout = new QFormLayout();
+
+    QList<QLabel *> label_for_deletion = this->findChildren<QLabel *>();
+    QList<QLineEdit *> lineedit_for_deletiong = this->parent()->findChildren<QLineEdit *>();
+    foreach(auto& x, lineedit_for_deletiong){
+        delete x;
+    }
+    foreach(auto& x, label_for_deletion){
+        delete x;
+    }
+    if(this->findChild<QPushButton*>(QString("formSubmit"))){
+        delete this->findChild<QPushButton*>(QString("formSubmit"));
+    }
+
+    QFormLayout* form = new QFormLayout();
 
     for(auto i = globalSettings.begin(); i != globalSettings.end(); i++){
         QLineEdit* tmp = new QLineEdit(tr("%1").arg(i.value().toInt()));
         tmp->setObjectName(tr("%1").arg(i.key()));
         tmp->setMaximumWidth(200);
-        layout->addRow(new QLabel(tr("%1").arg(i.key())), tmp);
+        QLabel* label = new QLabel(tr("%1").arg(i.key()));
+        form->addRow(label, tmp);
     }
-    layout->setFormAlignment(Qt::AlignHCenter);
+    form->setFormAlignment(Qt::AlignHCenter);
 
     QPushButton* nice = new QPushButton(QString("Update"));
+    nice->setObjectName("formSubmit");
     nice->setMaximumWidth(200);
 
-    layout->addWidget(nice);
+    form->addWidget(nice);
 
     QObject::connect(nice, SIGNAL(clicked()), this, SLOT(updateGlobals()));
 
@@ -105,7 +119,7 @@ bool SettingsWindow::readBagInfo(const QString& path){
 
     v_layout->addLayout(h_layout);
     v_layout->addSpacing(10);
-    v_layout->addLayout(layout);
+    v_layout->addLayout(form);
     v_layout->setAlignment(Qt::AlignCenter);
     mainLayout->addLayout(v_layout);
     inFile.close();
