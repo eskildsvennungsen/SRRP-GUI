@@ -62,6 +62,7 @@ public slots:
     virtual void updateBagInfo();
 
     void updateGlobals();
+    void updateRPM();
 
 private:
     BagInfo getBag(const QString& name);

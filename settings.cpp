@@ -66,7 +66,8 @@ bool SettingsWindow::readBagInfo(const QString& path){
 
     QVBoxLayout* v_layout = new QVBoxLayout();
     QHBoxLayout* h_layout = new QHBoxLayout();
-    QHBoxLayout* form_layout = new QHBoxLayout();
+    QHBoxLayout* module_layout = new QHBoxLayout();
+    QVBoxLayout* form_layout = new QVBoxLayout();
 
     h_layout->addWidget(custom);
 
@@ -75,9 +76,26 @@ bool SettingsWindow::readBagInfo(const QString& path){
     QFormLayout* form = globalSettingsForm(globalSettings, QString("mod1"));
     QFormLayout* form2 = globalSettingsForm(globalSettings, QString("mod2"));
     QFormLayout* form3 = globalSettingsForm(globalSettings, QString("mod3"));
-    form_layout->addLayout(form);
-    form_layout->addLayout(form2);
-    form_layout->addLayout(form3);
+    module_layout->addLayout(form);
+    module_layout->addLayout(form2);
+    module_layout->addLayout(form3);
+
+    QFormLayout* rpm = new QFormLayout();
+    QLineEdit* tmp = new QLineEdit(tr("%1").arg(globalSettings.value("RPM").toInt()));
+    tmp->setMaximumWidth(200);
+    tmp->setObjectName("RPM");
+    QLabel* label = new QLabel("RPM");
+    QPushButton* rpm_button = new QPushButton("Update RPM");
+    rpm_button->setObjectName("buttonRPM");
+    rpm_button->setMaximumWidth(200);
+    rpm->addRow(label, tmp);
+
+    QObject::connect(rpm_button, SIGNAL(clicked()), this, SLOT(updateRPM()));
+
+
+    form_layout->addLayout(rpm);
+    form_layout->addWidget(rpm_button);
+    form_layout->addLayout(module_layout);
 
     for(const QJsonValue& val : rootObj){
         if(val.toObject() == globalSettings) continue;
@@ -190,6 +208,25 @@ void SettingsWindow::updateGlobals(){
     foreach(auto *w, widgets) {
         if(w->objectName().contains(this->sender()->objectName())){
             modifyJsonValue(doc, tr("Global.%1.%2").arg(this->sender()->objectName()).arg(w->objectName().remove(this->sender()->objectName())), w->text().toInt());
+        }
+    }
+    file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
+    file.write(doc.toJson());
+    file.close();
+}
+
+void SettingsWindow::updateRPM(){
+    QFile file("baginfo.json");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonParseError JsonParseError;
+    QList<QLineEdit *> widgets = this->parent()->findChildren<QLineEdit *>();
+    QJsonDocument doc = QJsonDocument::fromJson(QByteArray::fromStdString(file.readAll().toStdString()));
+    file.close();
+    foreach(auto *w, widgets) {
+        qDebug() << this->sender()->objectName().contains(w->objectName());
+        if(this->sender()->objectName().contains(w->objectName())){
+            qDebug() << w->text();
+            modifyJsonValue(doc, "Global.RPM", w->text().toInt());
         }
     }
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);

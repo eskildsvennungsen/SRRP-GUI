@@ -1,5 +1,6 @@
 #include "generalwindow.h"
 #include "qheaderview.h"
+#include <QHBoxLayout>
 
 GeneralWindow::GeneralWindow(QWidget* parent)
     : QWidget(parent),
@@ -10,6 +11,9 @@ GeneralWindow::GeneralWindow(QWidget* parent)
     progressBar(new QProgressBar),
     mainLayout(new QVBoxLayout(this))
 {
+    QHBoxLayout* h_layout = new QHBoxLayout();
+
+
     fileWatcher->addPath(filepath);
 
     tableView->setObjectName("tableView");
